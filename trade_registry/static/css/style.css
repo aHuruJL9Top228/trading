@@ -1,0 +1,230 @@
+body{
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    bottom: 90px;
+    right: -20px;
+    width: 500px;          /* Настройте под вашу картинку */
+    height: 500px;         /* Настройте под вашу картинку */
+    background-image: url('../background.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    opacity: 0.8;          /* При желании — прозрачность */
+    pointer-events: none;  /* Кликать сквозь фон */
+    z-index: -1;           /* Фон под всем контентом */
+    margin: 20px;          /* Отступ от края */
+}
+
+.header{
+    display: flex;
+    width: 100%;
+    background: linear-gradient(90deg, #002255 0%, #042154 14%, #111F53 28%, #251C4F 43%, #42174B 57%, #681145 71%, #950A3F 86%, #C90237 100%);
+    height: 96px;
+    flex-direction: row;
+    flex-shrink: 0; /* Не сжимается */
+}
+
+.content-container{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    justify-content: space-between;
+}
+
+.title-container{
+    display: flex;
+    font-family: Montserrat;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 20px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: white;
+    max-width: 300px;
+}
+
+
+
+.link-header-container{
+    display: flex;
+    gap: 24px;
+}
+
+.title-link:hover{
+    color: #D4D4D4;
+}
+
+.info-message{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title-link{
+    font-family: Montserrat;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 16px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.footer {
+    background: linear-gradient(90deg, #002255 0%, #042154 14%, #111F53 28%, #251C4F 43%, #42174B 57%, #681145 71%, #950A39 86%, #C90237 100%);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    flex-shrink: 0; /* Не сжимается */
+}
+
+.footer-container{
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    justify-content: space-between;
+}
+
+.link-footer-container{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: start;
+}
+
+.web-site-links-footer-container{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.block-main-content{
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.title-part{
+    font-family: Montserrat;
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 56px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.container-add-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.button-add{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #7D7D7D;
+    width: 435px;
+    height: 52px;
+    font-family: Montserrat;
+    font-weight: 600;
+    font-style: SemiBold;
+    font-size: 16px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    text-decoration: none;
+    color: #FFFFFF;
+
+}
+
+.button-add:hover{
+    background-color: #022456;
+}
+
+
+
+
+.list-trading-objects{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.trading-object-card{
+    display: flex;
+    width: 432px;
+    height: auto;
+    background-color: #F0F2F4;
+    padding: 24px;
+    flex-direction: column;
+}
+
+.header-card-object{
+    color: #2C2C2C;
+    font-family: Montserrat;
+    font-weight: 600;
+    font-style: SemiBold;
+    font-size: 24px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-object-info{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.card-object-info-text{
+    color: #7D7D7D;
+    font-family: Montserrat;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 16px;
+    leading-trim: NONE;
+    line-height: 100%;
+    letter-spacing: 0%;
+
+}
+

@@ -1,0 +1,17 @@
+{% extends "trade_registry/wrapper.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="block-link-content" style="padding: 20px; border: 2px dashed red;">
+        Добавление главы
+    </div>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+
+    <button type="submit">Сохранить</button>
+</form>
+
+{% endblock %}

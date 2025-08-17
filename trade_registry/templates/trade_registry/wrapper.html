@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'css/selectize.default.min.css' %}">
+    <script src="{% static 'js/selectize.min.js' %}"></script>
+    <meta charset="UTF-8">
+    <title>МинПромТорг</title>
+    <style>
+        @font-face {
+        font-family: 'Montserrat';
+        src: url('{% static "fonts/Montserrat/Montserrat-Regular.ttf" %}') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('{% static "fonts/Montserrat/Montserrat-Medium.ttf" %}') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('{% static "fonts/Montserrat/Montserrat-SemiBold.ttf" %}') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            src: url('{% static "fonts/Montserrat/Montserrat-Bold.ttf" %}') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="content-container">
+            <div class="title-container">
+                МинПромТорг Белгородской области
+            </div>
+
+            <div class="link-header-container">
+                <a class="title-link" href="{% url 'trade' %}">Торговля</a>
+                <a class="title-link" href="{% url 'meal' %}">Общественное питание</a>
+                <a class="title-link" href="{% url 'services' %}">Бытовое обслуживание</a>
+            </div>
+            <img src="{% static 'logo1.svg' %}" alt="Логотип">
+        </div>
+    </div>
+    <div class="main-content">
+        {% block content %}
+
+        <p>Контент не определён</p>
+
+        {% endblock %}
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <img src="{% static 'logo1.svg' %}" alt="Логотип">
+            <div class="link-footer-container">
+                <a class="title-link" href="{% url 'trade' %}">Торговля</a>
+                <a class="title-link" href="{% url 'meal' %}">Общественное питание</a>
+                <a class="title-link" href="{% url 'services' %}">Бытовое обслуживание</a>
+            </div>
+            <div class="web-site-links-footer-container">
+                <a class="title-link" href="https://minecprom.belregion.ru/">Сайт Минпромторг России</a>
+                <p class="title-link">Контакты</p>
+            </div>
+
+
+        </div>
+    </div>
+</body>
+</html>

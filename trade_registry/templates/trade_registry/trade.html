@@ -1,0 +1,45 @@
+{% extends "trade_registry/wrapper.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="block-main-content">
+
+        <h2 class="title-part">
+            Торговля
+        </h2>
+        <div class="container-add-buttons">
+            <a class="button-add" href="{% url 'add_trade' %}">Добавить торговый объект</a>
+            <a class="button-add" href="{% url 'add_person' %}">Добавить главу</a>
+            <a class="button-add" href="{% url 'add_organization' %}">Добавить организацию</a>
+        </div>
+
+        <div class="list-trading-objects">
+            {% if objects %}
+            {% for object in objects %}
+            <div class="trading-object-card" id={{object.id}}>
+                <h2 class="header-card-object">
+                    {{object.object_name}}
+                </h2>
+
+                <div class="card-object-info">
+                    <div class="card-object-info-text">
+                        Код ОКПО: {{object.kod_okpo}}
+                    </div>
+                    <div class="card-object-info-text">
+                        Адрес объекта: {{object.address}}
+                    </div>
+                    <div class="card-object-info-text">
+                        Торговая марка: {{object.trading_mark}}
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+            {% else %}
+            <div class="info-message">
+                Нет объектов для отображения.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
