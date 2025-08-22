@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css">
     <link rel="stylesheet" href="{% static 'css/selectize.default.min.css' %}">
     <script src="{% static 'js/selectize.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/selectize.default.min.css' %}">
+    <script src="{% static 'js/selectize.min.js' %}"></script>
+    <script src="{% static 'js/autocomplete.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
     <meta charset="UTF-8">
     <title>МинПромТорг</title>
     <style>
@@ -53,7 +58,13 @@
             </div>
 
             <div class="link-header-container">
-                <a class="title-link" href="{% url 'trade' %}">Торговля</a>
+                <a class="title-link" href="{% url 'trade' %}" id="trade-link">Торговля</a>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'trade' %}">Объекты</a>
+                    <a class="dropdown-item" href="{% url 'owners' %}">Главы</a>
+                    <a class="dropdown-item" href="{% url 'organization' %}">Организации</a>
+                    <a class="dropdown-item" href="{% url 'report' %}">Отчеты</a>
+                </div>
                 <a class="title-link" href="{% url 'meal' %}">Общественное питание</a>
                 <a class="title-link" href="{% url 'services' %}">Бытовое обслуживание</a>
             </div>

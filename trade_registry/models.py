@@ -140,13 +140,7 @@ class Object(models.Model):
     registration_date = models.DateTimeField("Дата регистрации", auto_now_add=True)
     update_date = models.DateTimeField("Дата обновления", auto_now=True)
     delete_date = models.DateTimeField("Дата удаления", blank=True, null=True)
-    kind_of_object = models.ForeignKey(
-        KindObject,
-        on_delete=models.SET_NULL,
-        verbose_name="Разновидность объекта",
-        blank=True,
-        null=True
-    )
+
     trading_mark = models.ForeignKey(
         TradingMark,
         on_delete=models.SET_NULL,
@@ -177,6 +171,14 @@ class Object(models.Model):
         TypeOfTradingObject,
         on_delete=models.SET_NULL,
         verbose_name="Тип торгового объекта",
+        blank=True,
+        null=True
+    )
+
+    kind_of_object = models.ForeignKey(
+        KindObject,
+        on_delete=models.SET_NULL,
+        verbose_name="Разновидность объекта",
         blank=True,
         null=True
     )
@@ -220,6 +222,63 @@ class Municipality(models.Model):
 
     def __str__(self):
         return self.name
+
+class SquareRoz(models.Model):
+    object = models.ForeignKey(
+        Object,
+        on_delete=models.CASCADE,  # Лучше CASCADE, если при удалении объекта удаляется и площадь
+        verbose_name="Торговый объект",
+        related_name="square_roz"  # Удобно: object.square_roz.all()
+    )
+
+    all_owner = models.FloatField("Общая площадь на праве собственности", blank=True, null=True)
+    all_law = models.FloatField("Общая площадь иное законное основание (аренда)", blank=True, null=True)
+    trade_obj_owner = models.FloatField("Площадь торгового объекта на праве собственности", blank=True, null=True)
+    trade_obj_law = models.FloatField("Площадь торгового объекта иное законное основание (аренда)", blank=True, null=True)
+
+    def __str__(self):
+        return f"Розница: {self.object.name}"
+
+
+class SquareOpt(models.Model):
+    object = models.ForeignKey(
+        Object,
+        on_delete=models.CASCADE,
+        verbose_name="Торговый объект",
+        related_name="square_opt"  # Удобно: object.square_opt.all()
+    )
+
+    warehouse_square = models.FloatField("Площадь складского помещения", blank=True, null=True)
+    warehouse_vol = models.FloatField("Объем складского помещения", blank=True, null=True)
+    tank = models.FloatField("Цистерна для хранения нефтепродуктов", blank=True, null=True)
+    fridge_vol = models.FloatField("Объем холодильников", blank=True, null=True)
+    fridge_weight = models.FloatField("Масса товаров в холодильниках", blank=True, null=True)
+    def __str__(self):
+        return f"Опт: {self.object.name}"
+
+class SquareMeal(models.Model):
+    object = models.ForeignKey(
+        Object,
+        on_delete=models.CASCADE,
+        verbose_name="Объект",
+        related_name="square_meal"  # Удобно: object.square_opt.all()
+    )
+
+    open_space = models.FloatField("Площадь зала", blank=True, null=True)
+    people_space = models.FloatField("Количество посадочных мест", blank=True, null=True)
+
+
+class SquareServices(models.Model):
+    object = models.ForeignKey(
+        Object,
+        on_delete=models.CASCADE,
+        verbose_name="Объект",
+        related_name="square_services"  # Удобно: object.square_opt.all()
+    )
+
+    all_square = models.FloatField("Общая площадь", blank=True, null=True)
+    work_square = models.FloatField("Рабочая площадь", blank=True, null=True)
+
 
 
 class ActivityKind(models.Model):

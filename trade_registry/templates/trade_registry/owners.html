@@ -1,0 +1,35 @@
+{% extends "trade_registry/wrapper.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="block-main-content">
+        <h2 class="title-part">
+            Владельцы
+        </h2>
+        <div class="list-trading-objects">
+            {% if owners %}
+            {% for person in owners %}
+            <div class="trading-object-card" id={{person.id}}>
+                <h2 class="header-card-object">
+                    {{person.fio_person}}
+                </h2>
+
+                <div class="card-object-info">
+                    <div class="card-object-info-text">
+                        Код ОКПО: {{person.phone_number}}
+                    </div>
+                    <div class="card-object-info-text">
+                        Адрес объекта: {{person.email}}
+                    </div>
+                    <div class="card-object-info-text">
+                        Торговая марка: {{person.inn}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>Нет владельцев организаций с объектами вида "Торговля".</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

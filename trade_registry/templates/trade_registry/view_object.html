@@ -1,0 +1,79 @@
+{% extends "trade_registry/wrapper.html" %}
+{% load static %}
+
+{% block content %}
+<div class="block-main-content">
+    <h2 class="title-part">Просмотр торгового объекта</h2>
+
+    <!-- Скрытый элемент для передачи данных в JS -->
+    <div id="kind-object-data"
+         data-retail-kind-id="{{ retail_kind_id|escapejs }}"
+         data-wholesale-kind-id="{{ wholesale_kind_id|escapejs }}"
+         data-object-kind-id="{{ object.kind_of_object.id|escapejs }}">
+    </div>
+
+    <form method="post" class="form-edit-object">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <!-- Розничная площадь -->
+        <div id="square-roz-form" style="display: none;">
+            <h3>Площадь розничного объекта</h3>
+            {% if square_roz_form %}
+                {{ square_roz_form.as_p }}
+            {% else %}
+                <p>Данные о площади розничного объекта отсутствуют.</p>
+            {% endif %}
+        </div>
+
+        <!-- Оптовая площадь -->
+        <div id="square-opt-form" style="display: none;">
+            <h3>Площадь оптового объекта</h3>
+            {% if square_opt_form %}
+                {{ square_opt_form.as_p }}
+            {% else %}
+                <p>Данные о площади оптового объекта отсутствуют.</p>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'trade' %}" class="button-cancel">Назад</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Получаем данные из скрытого элемента
+    const kindObjectData = document.getElementById('kind-object-data');
+
+    if (!kindObjectData) {
+        console.error('Element kind-object-data not found');
+        return;
+    }
+
+    const retailKindId = kindObjectData.getAttribute('data-retail-kind-id');
+    const wholesaleKindId = kindObjectData.getAttribute('data-wholesale-kind-id');
+    const objectKindId = kindObjectData.getAttribute('data-object-kind-id');
+
+    console.log('Retail ID:', retailKindId);
+    console.log('Wholesale ID:', wholesaleKindId);
+    console.log('Object Kind ID:', objectKindId);
+
+    const squareRozForm = document.getElementById('square-roz-form');
+    const squareOptForm = document.getElementById('square-opt-form');
+
+    if (!squareRozForm || !squareOptForm) {
+        console.error('One or more elements not found');
+        return;
+    }
+
+    // Показываем нужную форму
+    if (retailKindId && objectKindId === retailKindId) {
+        squareRozForm.style.display = 'block';
+    } else if (wholesaleKindId && objectKindId === wholesaleKindId) {
+        squareOptForm.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}

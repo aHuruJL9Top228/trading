@@ -1,0 +1,37 @@
+{% extends "trade_registry/wrapper.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="block-main-content">
+        <h2 class="title-part">
+            Отчеты по торговым объектам
+        </h2>
+
+        <!-- Кнопка выгрузки отчета -->
+        <div class="report-actions">
+            <a href="{% url 'export_trade_marks_report' %}" class="button-export">
+                <i class="fas fa-file-excel"></i> Выгрузить отчет по торговым маркам (Приложение 10)
+            </a>
+        </div>
+
+        <div class="list-trading-objects">
+            {% if organizations %}
+            {% for organization in organizations %}
+            <div class="trading-object-card" id={{organization.id}}>
+                <h2 class="header-card-object">
+                    {{organization.name}}
+                </h2>
+
+                <div class="card-object-info">
+                    <div class="card-object-info-text">
+                        Адрес: {{organization.address}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>Нет владельцев организаций с объектами вида "Торговля".</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

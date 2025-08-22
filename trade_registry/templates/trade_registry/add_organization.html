@@ -3,8 +3,8 @@
 {% load static %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 20px auto; padding: 20px;">
-    <h2>Добавление организации</h2>
+<div class="block-main-content">
+    <h2 class="title-part">Добавление организации</h2>
 
     <form method="post" id="org-form">
         {% csrf_token %}
@@ -12,16 +12,16 @@
         <!-- Основные поля формы (скрываем linked_objects) -->
         {% for field in form %}
             {% if field.name != 'linked_objects' %}
-                <div class="form-group">
+                <p>
                     {{ field.label_tag }}
                     {{ field }}
-                </div>
+                <p>
             {% endif %}
         {% endfor %}
 
         <!-- Поле для автокомплита -->
-        <div style="margin: 20px 0;">
-            <label>Выберите объекты:</label>
+        <div class="add-trading-obj">
+            <label>Выберите объекты (принадлежащие организации):</label>
             <select id="object-select" multiple placeholder="Начните вводить название...">
                 {% if form.linked_objects.value %}
                     {% for obj in form.linked_objects.field.queryset.all %}
@@ -35,88 +35,9 @@
             <select id="real-linked-objects" name="linked_objects" multiple class="d-none"></select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="submit" class="button-save">Сохранить</button>
     </form>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="{% static 'css/selectize.default.min.css' %}">
-<script src="{% static 'js/selectize.min.js' %}"></script>
-
-<script>
-$(document).ready(function() {
-var $select = $('#object-select').selectize({
-    plugins: ['remove_button'],
-    valueField: 'id',
-    labelField: 'name',
-    searchField: 'name',
-    create: false,
-    maxItems: null,
-    loadThrottle: 100, // Уменьшаем задержку до 100 мс
-    openOnFocus: true, // Открывать список при фокусе
-    load: function(query, callback) {
-        if (!query.length) {
-            this.clearOptions();
-            return callback();
-        }
-
-        var self = this;
-        $.ajax({
-            url: '{% url "object_search" %}',
-            type: 'GET',
-            data: { q: query },
-            error: function() {
-                callback();
-            },
-            success: function(res) {
-                // Очищаем текущие опции перед добавлением новых
-                self.clearOptions();
-                callback(res);
-                // Принудительно обновляем список опций
-                self.refreshOptions(false);
-            }
-        });
-    }
-});
-
-    // Синхронизация с реальным полем формы
-    var selectize = $select[0].selectize;
-    var $realSelect = $('#real-linked-objects');
-
-    selectize.on('change', function() {
-        $realSelect.empty();
-        var values = selectize.getValue();
-        if (values && values.length) {
-            // Для новых версий Selectize getValue() возвращает массив
-            $.each(Array.isArray(values) ? values : values.split(','), function(i, val) {
-                $realSelect.append(new Option('', val, true, true));
-            });
-        }
-    });
-});
-</script>
-
-<style>
-.d-none {
-    display: none !important;
-}
-.selectize-input {
-    padding: 10px !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-}
-.selectize-input.focus {
-    box-shadow: none !important;
-}
-.selectize-dropdown {
-    border-radius: 0 0 4px 4px !important;
-}
-.selectize-input > div {
-    background: #4285f4 !important;
-    color: white !important;
-    padding: 5px 8px !important;
-    border-radius: 3px !important;
-}
-</style>
 {% endblock %}
 

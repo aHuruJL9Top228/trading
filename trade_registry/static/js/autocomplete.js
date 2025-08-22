@@ -1,102 +1,253 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('object-search');
-    const resultsContainer = document.getElementById('search-results');
-    const selectedList = document.getElementById('selected-list');
+    // Основные элементы
+    const originalSelect = document.getElementById('object-select');
+    const realLinkedObjects = document.getElementById('real-linked-objects');
 
-    if (!searchInput || !resultsContainer || !selectedList) return;
+    // Создаем кастомный контейнер
+    const customContainer = document.createElement('div');
+    customContainer.className = 'custom-select-container';
+    customContainer.id = 'custom-select-container';
 
-    const selectedObjects = new Map();
-    let searchTimeout;
+    // Контейнер для выбранных элементов
+    const selectedItemsContainer = document.createElement('div');
+    selectedItemsContainer.className = 'selected-items';
+    customContainer.appendChild(selectedItemsContainer);
 
-    async function fetchObjects(query) {
-        try {
-            const response = await fetch(`/trade_registry/object-search/?q=${encodeURIComponent(query)}`);
+    // Поле для поиска
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'search-input';
+    searchInput.placeholder = 'Начните вводить название...';
+    searchInput.autocomplete = 'off';
+    customContainer.appendChild(searchInput);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+    // Выпадающий список
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dropdown';
+    customContainer.appendChild(dropdown);
 
-            return await response.json();
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return [];
-        }
+    // Вставляем кастомный контейнер после оригинального select
+    originalSelect.parentNode.insertBefore(customContainer, originalSelect.nextSibling);
+
+    // Скрываем оригинальный select
+    originalSelect.style.display = 'none';
+
+    // Состояние приложения
+    let selectedItems = [];
+    let searchResults = [];
+    let activeIndex = -1;
+    let isLoading = false;
+
+    // Инициализация выбранных элементов
+    function initSelectedItems() {
+        const selectedOptions = originalSelect.querySelectorAll('option[selected]');
+        selectedOptions.forEach(option => {
+            selectedItems.push({
+                id: option.value,
+                name: option.textContent
+            });
+        });
+        renderSelectedItems();
+        updateRealSelect();
     }
 
-    function displayResults(items) {
-        resultsContainer.innerHTML = '';
+    // Отрисовка выбранных элементов с использованием делегирования событий
+    function renderSelectedItems() {
+        selectedItemsContainer.innerHTML = '';
 
-        if (!items || items.length === 0) {
-            resultsContainer.innerHTML = '<div class="no-results">Ничего не найдено</div>';
-            resultsContainer.style.display = 'block';
+        selectedItems.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'selected-item';
+            itemEl.dataset.id = item.id;
+            itemEl.innerHTML = `
+                ${item.name}
+                <button class="remove-btn" data-id=${item.id}>×</button>
+            `;
+            selectedItemsContainer.appendChild(itemEl);
+        });
+    }
+
+    // Удаление элемента
+    function removeItem(id) {
+        // Удаляем из выбранных
+        selectedItems = selectedItems.filter(item => item.id !== id);
+
+        // Обновляем отображение
+        renderSelectedItems();
+        updateRealSelect();
+
+        // Возвращаем фокус в поле ввода
+        searchInput.focus();
+    }
+
+    // Обновление скрытого select
+    function updateRealSelect() {
+        // Очищаем реальный select
+        realLinkedObjects.innerHTML = '';
+
+        // Добавляем текущие выбранные элементы
+        selectedItems.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            option.selected = true;
+            realLinkedObjects.appendChild(option);
+        });
+    }
+
+    // АЛЬТЕРНАТИВНЫЙ ГАРАНТИРОВАННЫЙ ВАРИАНТ
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-btn')) {
+            const id = e.target.getAttribute('data-id');
+            console.log("Глобальный обработчик: клик по удалению, ID:", id);
+            if (id) {
+                // Находим ближайший контейнер
+                const container = document.getElementById('custom-select-container');
+                if (container) {
+                    // Вызываем removeItem
+                    removeItem(id);
+                }
+            }
+        }
+    });
+
+    // ====== Остальной код без изменений ======
+    // Показать dropdown
+    function showDropdown() {
+        dropdown.style.display = 'block';
+    }
+
+    // Скрыть dropdown
+    function hideDropdown() {
+        dropdown.style.display = 'none';
+        activeIndex = -1;
+    }
+
+    // Показать загрузку
+    function showLoading() {
+        dropdown.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                <span>Поиск объектов...</span>
+            </div>
+        `;
+        showDropdown();
+    }
+
+    // Показать результаты
+    function showResults() {
+        dropdown.innerHTML = '';
+
+        if (searchResults.length === 0) {
+            dropdown.innerHTML = '<div class="no-results">Объекты не найдены</div>';
+            showDropdown();
             return;
         }
 
-        items.forEach(item => {
-            if (selectedObjects.has(item.id)) return;
+        searchResults.forEach((item, index) => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'dropdown-item';
+            if (index === activeIndex) {
+                itemEl.classList.add('active');
+            }
+            itemEl.textContent = item.object_name;
+            itemEl.dataset.id = item.id;
+            itemEl.dataset.name = item.object_name;
 
-            const div = document.createElement('div');
-            div.className = 'result-item';
-            div.innerHTML = `
-                <div class="item-name">${item.name || 'Без названия'}</div>
-                ${item.address ? `<div class="item-address">${item.address}</div>` : ''}
-            `;
-
-            div.addEventListener('click', () => {
-                addSelectedItem(item);
-                searchInput.value = '';
-                resultsContainer.style.display = 'none';
+            itemEl.addEventListener('click', () => {
+                selectItem(item);
             });
 
-            resultsContainer.appendChild(div);
+            dropdown.appendChild(itemEl);
         });
 
-        resultsContainer.style.display = 'block';
+        showDropdown();
     }
 
-    function addSelectedItem(item) {
-        if (selectedObjects.has(item.id)) return;
+    // Выбор элемента
+    function selectItem(item) {
+        // Проверяем, не добавлен ли уже этот элемент
+        if (!selectedItems.some(selected => selected.id === item.id)) {
+            selectedItems.push({
+                id: item.id,
+                name: item.object_name
+            });
+            renderSelectedItems();
+            updateRealSelect();
+        }
 
-        selectedObjects.set(item.id, item);
+        // Сбрасываем поиск
+        searchInput.value = '';
+        hideDropdown();
+        searchResults = [];
+        activeIndex = -1;
+    }
 
-        const tag = document.createElement('div');
-        tag.className = 'selected-tag';
-        tag.innerHTML = `
-            <span>${item.name}</span>
-            <button class="remove-tag" data-id="${item.id}">×</button>
-            <input type="hidden" name="linked_objects" value="${item.id}">
-        `;
+    // Поиск объектов
+    function searchObjects(query) {
+        if (query.length < 2) {
+            hideDropdown();
+            return;
+        }
 
-        selectedList.appendChild(tag);
+        isLoading = true;
+        showLoading();
+
+        // AJAX запрос
+        fetch(`/trade_registry/object-search/?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults = Array.isArray(data) ? data : (data.results || []);
+                isLoading = false;
+                showResults();
+            })
+            .catch(error => {
+                console.error('Ошибка поиска:', error);
+                isLoading = false;
+                hideDropdown();
+            });
     }
 
     // Обработчики событий
     searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
         const query = this.value.trim();
-
-        if (query.length < 2) {
-            resultsContainer.style.display = 'none';
-            return;
-        }
-
-        searchTimeout = setTimeout(async () => {
-            const results = await fetchObjects(query);
-            displayResults(results);
-        }, 300);
+        searchObjects(query);
     });
 
-    selectedList.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-tag')) {
-            const id = e.target.getAttribute('data-id');
-            selectedObjects.delete(id);
-            e.target.closest('.selected-tag').remove();
+    searchInput.addEventListener('keydown', function(e) {
+        // Навигация по выпадающему списку
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, searchResults.length - 1);
+            showResults();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, -1);
+            showResults();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex >= 0 && activeIndex < searchResults.length) {
+                selectItem(searchResults[activeIndex]);
+            }
+        } else if (e.key === 'Escape') {
+            hideDropdown();
         }
     });
 
+    // Закрытие dropdown при клике вне элемента
     document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-            resultsContainer.style.display = 'none';
+        if (!customContainer.contains(e.target)) {
+            hideDropdown();
         }
     });
+
+    // Фокус на поле ввода при клике на контейнер
+    customContainer.addEventListener('click', function(e) {
+        if (e.target === customContainer || e.target === selectedItemsContainer) {
+            searchInput.focus();
+        }
+    });
+
+    // Инициализация
+    initSelectedItems();
 });

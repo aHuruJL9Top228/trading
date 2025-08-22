@@ -5,8 +5,67 @@
     <div class="block-main-content">
 
         <h2 class="title-part">
-            Торговля
+            Торговые объекты
         </h2>
+        <div class="filter-form-container">
+            <form method="get" action="." class="filter-form">
+                <div class="filter-row">
+                    <input type="text" name="object_name" placeholder="Название объекта" value="{{ object_name }}">
+                    <input type="text" name="kod_okpo" placeholder="Код ОКПО" value="{{ kod_okpo }}">
+                    <input type="text" name="address" placeholder="Адрес объекта" value="{{ address }}">
+                    <select name="trading_mark">
+                        <option value="">Торговая марка</option>
+                        {% for mark in trading_marks %}
+                            <option value="{{ mark.id }}" {% if mark.id|stringformat:"s" == trading_mark %}selected{% endif %}>
+                                {{ mark.brand_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="mo">
+                        <option value="">Муниципальное образование</option>
+                        {% for m in municipalities %}
+                            <option value="{{ m.id }}" {% if m.id|stringformat:"s" == mo %}selected{% endif %}>
+                                {{ m.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="type_object">
+                        <option value="">Тип объекта</option>
+                        {% for t in object_types %}
+                            <option value="{{ t.id }}" {% if t.id|stringformat:"s" == type_object %}selected{% endif %}>
+                                {{ t.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="kind_activity">
+                        <option value="">Под вид деятельности</option>
+                        {% for k in activity_kinds %}
+                            <option value="{{ k.id }}" {% if k.id|stringformat:"s" == kind_activity %}selected{% endif %}>
+                                {{ k.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="form_property">
+                        <option value="">Форма собственности</option>
+                        {% for f in form_properties %}
+                            <option value="{{ f.id }}" {% if f.id|stringformat:"s" == form_property %}selected{% endif %}>
+                                {{ f.name_of_form_property }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="container-button-filter">
+                    <button type="submit" class="button-filter">Поиск</button>
+                    <a href="{% url 'trade' %}" class="button-reset">Сбросить</a>
+                </div>
+            </form>
+        </div>
+
+
         <div class="container-add-buttons">
             <a class="button-add" href="{% url 'add_trade' %}">Добавить торговый объект</a>
             <a class="button-add" href="{% url 'add_person' %}">Добавить главу</a>
@@ -31,6 +90,11 @@
                     <div class="card-object-info-text">
                         Торговая марка: {{object.trading_mark}}
                     </div>
+                </div>
+
+                <div class="card-object-links">
+                    <a class="button-view" href="{% url 'view_object' object_id=object.id %}">Просмотр</a>
+                    <a class="button-edit" href="{% url 'edit_object' object_id=object.id %}"><img src="{% static 'edit-pensil.svg' %}" alt="Редактирование"></a>
                 </div>
             </div>
 
